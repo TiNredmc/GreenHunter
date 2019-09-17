@@ -16,6 +16,7 @@ int turn_tune = 100; //ms
 
 void setup() {
   // put your setup code here, to run once:
+DDRB = DDRB | B00001111 ; //init the motors pin
 pinMode(sensor_left, INPUT);
 pinMode(sensor_right, INPUT);
 pinMode(sensor_midin, INPUT);
@@ -32,28 +33,29 @@ void loop() {
  */
 void motor_Drive(int hexa_drive, int interv){ //Drive the motors using pin manipulation 
   //By using pin 8 9 10 and 11 which are PB0 PB1 PB2 and PB3. We use this because it convenience to manipulate.
-  PORTD = PORTD | 0x00 ; //Clear the f*ck out and stop all motor
+  PORTB = 0x00 ; //Clear the f*ck out and stop all motor
   if (hexa_drive == 0){//forward
-  PORTB = PORTB | 0x0A ; // 1010
+  PORTB = 0x0A ; // 1010
   }else if (hexa_drive == 1){//backward
-  PORTD = PORTD | 0x05 ; // 0101
+  PORTB = 0x05 ; // 0101
   }else if (hexa_drive == 2){//turn left
-  PORTD = PORTD | 0x06 ; // 0110
+  PORTB = 0x06 ; // 0110
   }else if (hexa_drive == 3){//turn right
-  PORTD = PORTD | 0x09 ; // 1001
+  PORTB = 0x09 ; // 1001
   }else {
-  PORTD = PORTD | 0x00 ; //Clear the f*ck out and stop all motor
+  PORTB = 0x00 ; //Clear the f*ck out and stop all motor
   return ; 
   }
+  if(interv == 0){return;}
   delay(interv);
-  PORTD = PORTD | 0x00 ; //Clear the f*ck out and stop all motor
+  PORTB = 0x00 ; //Clear the f*ck out and stop all motor
   
 }
 /* take dicision to determine if the line was thinck or thin 
  * this will occur when midin sensor detect black stip at the border or black bridge. 
  */
 void dicision(){
-  PORTD = PORTD | 0x00 ; //Clear the f*ck out and stop all motor
+  PORTB = 0x00 ; //Clear the f*ck out and stop all motor
   if ((sensor_midin == 1) && ((sensor_left | sensor_right) == 0)){ // detect the black line 
   motor_Drive(1, 100); //backward 100ms
   motor_Drive(2,turn_tune); 
