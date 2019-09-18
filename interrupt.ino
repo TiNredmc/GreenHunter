@@ -67,7 +67,7 @@ void dicision() {
   delay(65);
   if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) && digitalRead(sensor_right)) == 1)) { // detect the black line
     turn_count = turn_count + 1 ;
-    if (turn_count == 4 || turn_count == 11 || turn_count == 12 || turn_count == 18 || turn_count == 19 || turn_count == 20) { // turn left normally
+    if (turn_count == 3 || turn_count == 10 || turn_count == 11 || turn_count == 17 || turn_count == 18 || turn_count == 19) { // turn left normally
       bk(globalSpeed);
       delay(300);
       tl();
@@ -75,30 +75,7 @@ void dicision() {
       fd();
       cli();
       return;
-    } else if (turn_count == 8) { // L F R F
-      bk(globalSpeed);
-      delay(300);
-      tl();
-      delay(548);
-      fd();
-      delay(1300);
-      tl();
-      delay(548);
-      fd();
-      cli();
-      return;
-    } else if (turn_count == 14) {// R R F
-      bk(globalSpeed);
-      delay(300);
-      tr();
-      delay(548);
-      tr();
-      delay(548);
-      fd();
-      delay(548);
-      cli();
-      return;
-    } else if (turn_count == 15) {// L F L F
+    } else if (turn_count == 7) { // L F R F
       bk(globalSpeed);
       delay(300);
       tl();
@@ -110,7 +87,30 @@ void dicision() {
       fd();
       cli();
       return;
-    } else if (turn_count == 21) {
+    } else if (turn_count == 13) {// R R F
+      bk(globalSpeed);
+      delay(300);
+      tr();
+      delay(548);
+      tr();
+      delay(548);
+      fd();
+      delay(548);
+      cli();
+      return;
+    } else if (turn_count == 14) {// L F L F
+      bk(globalSpeed);
+      delay(300);
+      tl();
+      delay(548);
+      fd();
+      delay(1300);
+      tl();
+      delay(548);
+      fd();
+      cli();
+      return;
+    } else if (turn_count == 20) {
       fd();
       delay(700);
       motor(1, 0); motor(2, 0); // stop motor
@@ -127,7 +127,7 @@ void dicision() {
     }
   } else if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) && digitalRead(sensor_right)) == 0)) { // detect the thick black strip
     blk_count = blk_count + 1 ;
-    if (turn_count == 3 && blk_count == 1) {
+    if (blk_count == 1) {
       bk(globalSpeed);
       delay(300);
       tr();
@@ -201,8 +201,7 @@ void dicision() {
       delay(548);
       cli();
       return;
-    }
-    else {
+    }else {
       fd();
       delay(2000);
       cli();
