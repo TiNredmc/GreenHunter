@@ -28,7 +28,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly
   //attachInterrupt(INT2, dicision, FALLING);// suddenly from white to black
-  
+
 
 }
 /* Usage
@@ -61,7 +61,7 @@ void tr() // ฟังก์ชั่นเลี้ยวขวา
 }
 
 void dicision() {
-  
+
   sei();
   motor(1, 0); motor(2, 0); // stop motor
   delay(65);
@@ -125,7 +125,7 @@ void dicision() {
       cli();
       return;
     }
-  }else if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) && digitalRead(sensor_right)) == 0)) { // detect the thick black strip
+  } else if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) && digitalRead(sensor_right)) == 0)) { // detect the thick black strip
     blk_count = blk_count + 1 ;
     if (turn_count == 3 && blk_count == 1) {
       bk(globalSpeed);
@@ -135,7 +135,7 @@ void dicision() {
       fd();
       cli();
       return;
-    } else if (blk_count == 2){
+    } else if (blk_count == 2) {
       digitalWrite(14, HIGH);
       delay(200);
       digitalWrite(14, LOW);
@@ -151,19 +151,70 @@ void dicision() {
       fd();
       cli();
       return;
+    } else if (blk_count == 3){
+    bk(globalSpeed);
+    delay(300);
+    fd();
+    delay(2599);
+    tr();
+    delay(548);
+    fd();
+    cli();
+    return;
+    }
+    else if (blk_count == 4) {
+      digitalWrite(14, HIGH);
+      delay(200);
+      digitalWrite(14, LOW);
+      delay(100);
+      tr();
+      delay(548);
+      tr();
+      delay(548);
+      fd();
+      cli();
+      return;
+    }else if (blk_count == 5){
+      digitalWrite(14, HIGH);
+      delay(200);
+      digitalWrite(14, LOW);
+      delay(100);
+      tr();
+      delay(548);
+      tr();
+      delay(548);
+      fd();
+      cli();
+      return;
+    }else if (blk_count == 6){
+    digitalWrite(14, HIGH);
+      delay(200);
+      digitalWrite(14, LOW);
+      delay(100);
+      tr();
+      delay(548);
+      tr();
+      delay(548);
+      fd();
+      delay(1300);
+      tr();
+      delay(548);
+      cli();
+      return;
+    }
     else {
       fd();
       delay(2000);
       cli();
       return;
     }
-  }else {
-      bk(globalSpeed);
-      delay(300);
-      tr();
-      delay(548);
-      fd();
-      cli();
-      return;
+  } else {
+    bk(globalSpeed);
+    delay(300);
+    tr();
+    delay(548);
+    fd();
+    cli();
+    return;
   }
 }
