@@ -12,6 +12,7 @@ volatile byte blk_line = LOW; // The variable for the black line detection.
 //Right_pos 10
 //Right_neg 11
 int turn_count = 0; //ms
+int blk_count = 0 ;
 int globalSpeed = 20;
 void setup() {
   // put your setup code here, to run once:
@@ -60,11 +61,12 @@ void tr() // ฟังก์ชั่นเลี้ยวขวา
 }
 
 void dicision() {
-  turn_count = turn_count + 1 ;
+  
   sei();
   motor(1, 0); motor(2, 0); // stop motor
   delay(65);
   if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) && digitalRead(sensor_right)) == 1)) { // detect the black line
+    turn_count = turn_count + 1 ;
     if (turn_count == 4 || turn_count == 11 || turn_count == 12 || turn_count == 18 || turn_count == 19 || turn_count == 20) { // turn left normally
       bk(globalSpeed);
       delay(300);
@@ -124,7 +126,8 @@ void dicision() {
       return;
     }
   }else if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) && digitalRead(sensor_right)) == 0)) { // detect the thick black strip
-    if (turn_count == 3) {
+    blk_count = blk_count + 1 ;
+    if (turn_count == 3 && blk_count == 1) {
       bk(globalSpeed);
       delay(300);
       tr();
@@ -132,7 +135,23 @@ void dicision() {
       fd();
       cli();
       return;
-    } else {
+    } else if (blk_count == 2){
+      digitalWrite(14, HIGH);
+      delay(200);
+      digitalWrite(14, LOW);
+      delay(100);
+      tr();
+      delay(548);
+      tr();
+      delay(548);
+      fd();
+      delay(1300);
+      tr();
+      delay(548);
+      fd();
+      cli();
+      return;
+    else {
       fd();
       delay(2000);
       cli();
