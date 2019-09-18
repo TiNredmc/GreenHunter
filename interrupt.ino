@@ -125,7 +125,7 @@ void dicision() {
       cli();
       return;
     }
-  } else if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) && digitalRead(sensor_right)) == 0)) { // detect the thick black strip
+  } else if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) || digitalRead(sensor_right)) == 0)) { // detect the thick black strip
     blk_count = blk_count + 1 ;
     if (blk_count == 1) {
       bk(globalSpeed);
