@@ -1,67 +1,150 @@
-
+#include <ipst.h>
 // these are the pins for sensors
-int sensor_left = 5 ;
-int sensor_right = 4 ;
-int sensor_midin = 2 ; // interrupt on this pin.
-int sensor_greenhunter = 3; 
+int sensor_left = 17 ;
+int sensor_right = 16 ;
+int sensor_midin = 18 ; // interrupt on this pin.
+//int sensor_greenhunter = 3;
 volatile byte blk_line = LOW; // The variable for the black line detection.
 // int white = 0; int black = 1;
-
-// these are the pins for motor 
-//Left_pos 8 
-//Left_neg 9 
-//Right_pos 10 
-//Right_neg 11 
-int turn_tune = 100; //ms
-
+// these are the pins for motor
+//Left_pos 8
+//Left_neg 9
+//Right_pos 10
+//Right_neg 11
+int turn_count = 0; //ms
+int globalSpeed = 20;
 void setup() {
   // put your setup code here, to run once:
-DDRB = DDRB | B00001111 ; //init the motors pin
-pinMode(sensor_left, INPUT);
-pinMode(sensor_right, INPUT);
-pinMode(sensor_midin, INPUT);
-attachInterrupt(digitalPinToInterrupt(sensor_midin), dicision, FALLING);// suddenly from white to black 
+  pinMode(sensor_left, INPUT);
+  pinMode(sensor_right, INPUT);
+  digitalWrite(15, HIGH);
+  pinMode(sensor_midin, INPUT);
+  fd();
+  delay(1300);
+  attachInterrupt(INT2, dicision, FALLING);// suddenly from white to black
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // put your main code here, to run repeatedly
+  //attachInterrupt(INT2, dicision, FALLING);// suddenly from white to black
+  
 
 }
 /* Usage
- *  hexa_drive the motors driving code. 1 represent forward , 2 represent backward , 3 represent turnleft and 4 represent turn right 
+ *  hexa_drive the motors driving code. 1 represent forward , 2 represent backward , 3 represent turnleft and 4 represent turn right
  *  interv is interval or how long does motor need te spin in milsec.
  */
-void motor_Drive(int hexa_drive, int interv){ //Drive the motors using pin manipulation 
-  //By using pin 8 9 10 and 11 which are PB0 PB1 PB2 and PB3. We use this because it convenience to manipulate.
-  PORTB = 0x00 ; //Clear the f*ck out and stop all motor
-  if (hexa_drive == 0){//forward
-  PORTB = 0x0A ; // 1010
-  }else if (hexa_drive == 1){//backward
-  PORTB = 0x05 ; // 0101
-  }else if (hexa_drive == 2){//turn left
-  PORTB = 0x06 ; // 0110
-  }else if (hexa_drive == 3){//turn right
-  PORTB = 0x09 ; // 1001
-  }else {
-  PORTB = 0x00 ; //Clear the f*ck out and stop all motor
-  return ; 
-  }
-  if(interv == 0){return;}
-  delay(interv);
-  PORTB = 0x00 ; //Clear the f*ck out and stop all motor
-  
-}
-/* take dicision to determine if the line was thinck or thin 
- * this will occur when midin sensor detect black stip at the border or black bridge. 
+
+/* take dicision to determine if the line was thinck or thin
+ * this will occur when midin sensor detect black stip at the border or black bridge.
  */
-void dicision(){
-  PORTB = 0x00 ; //Clear the f*ck out and stop all motor
-  if ((sensor_midin == 1) && ((sensor_left | sensor_right) == 0)){ // detect the black line 
-  motor_Drive(1, 100); //backward 100ms
-  motor_Drive(2,turn_tune); 
-  }else if ((sensor_midin == 1) && ((sensor_left & sensor_right) == 1)){// detect the thick black strip
-  return ; // go back to void loop and go forward. 
+void fd() // ฟังก์ชั่นเดินหน้า
+{
+  motor(1, globalSpeed);
+  motor(2, globalSpeed);
+}
+void bk(int bwspd) // ฟังก์ชั่นถอยหลัง
+{
+  motor(1, -bwspd);
+  motor(2, -bwspd);
+}
+void tl() // ฟังก์ชั่นเลี้ยวซ้าย
+{
+  motor(1, globalSpeed);
+  motor(2, -globalSpeed);
+}
+void tr() // ฟังก์ชั่นเลี้ยวขวา
+{
+  motor(1, -globalSpeed);
+  motor(2, globalSpeed);
+}
+
+void dicision() {
+  turn_count = turn_count + 1 ;
+  sei();
+  motor(1, 0); motor(2, 0); // stop motor
+  delay(65);
+  if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) && digitalRead(sensor_right)) == 1)) { // detect the black line
+    if (turn_count == 4 || turn_count == 11 || turn_count == 12 || turn_count == 18 || turn_count == 19 || turn_count == 20) { // turn left normally
+      bk(globalSpeed);
+      delay(300);
+      tl();
+      delay(548);
+      fd();
+      cli();
+      return;
+    } else if (turn_count == 8) { // L F R F
+      bk(globalSpeed);
+      delay(300);
+      tl();
+      delay(548);
+      fd();
+      delay(1300);
+      tl();
+      delay(548);
+      fd();
+      cli();
+      return;
+    } else if (turn_count == 14) {// R R F
+      bk(globalSpeed);
+      delay(300);
+      tr();
+      delay(548);
+      tr();
+      delay(548);
+      fd();
+      delay(548);
+      cli();
+      return;
+    } else if (turn_count == 15) {// L F L F
+      bk(globalSpeed);
+      delay(300);
+      tl();
+      delay(548);
+      fd();
+      delay(1300);
+      tl();
+      delay(548);
+      fd();
+      cli();
+      return;
+    } else if (turn_count == 21) {
+      fd();
+      delay(700);
+      motor(1, 0); motor(2, 0); // stop motor
+      cli();
+      return;
+    } else {// turn right
+      bk(globalSpeed);
+      delay(300);
+      tr();
+      delay(548);
+      fd();
+      cli();
+      return;
+    }
+  }else if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) && digitalRead(sensor_right)) == 0)) { // detect the thick black strip
+    if (turn_count == 3) {
+      bk(globalSpeed);
+      delay(300);
+      tr();
+      delay(548);
+      fd();
+      cli();
+      return;
+    } else {
+      fd();
+      delay(2000);
+      cli();
+      return;
+    }
   }else {
-  
-  }   
+      bk(globalSpeed);
+      delay(300);
+      tr();
+      delay(548);
+      fd();
+      cli();
+      return;
+  }
 }
