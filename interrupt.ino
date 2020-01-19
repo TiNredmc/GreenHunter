@@ -39,22 +39,22 @@ void loop() {
 /* take dicision to determine if the line was thinck or thin
  * this will occur when midin sensor detect black stip at the border or black bridge.
  */
-void fd() // ฟังก์ชั่นเดินหน้า
+void fd() // moving foward using global speed
 {
   motor(1, globalSpeed);
   motor(2, globalSpeed);
 }
-void bk(int bwspd) // ฟังก์ชั่นถอยหลัง
+void bk(int bwspd) // moving backward using global speed
 {
   motor(1, -bwspd);
   motor(2, -bwspd);
 }
-void tl() // ฟังก์ชั่นเลี้ยวซ้าย
+void tl() // turn left 
 {
   motor(1, globalSpeed);
   motor(2, -globalSpeed);
 }
-void tr() // ฟังก์ชั่นเลี้ยวขวา
+void tr() // turn right
 {
   motor(1, -globalSpeed);
   motor(2, globalSpeed);
@@ -62,7 +62,7 @@ void tr() // ฟังก์ชั่นเลี้ยวขวา
 
 void dicision() {
 
-  sei();
+  sei();// Disable interrupt to make delay works
   motor(1, 0); motor(2, 0); // stop motor
   delay(65);
   if ((digitalRead(sensor_midin) == 0) && ((digitalRead(sensor_left) && digitalRead(sensor_right)) == 1)) { // detect the black line
