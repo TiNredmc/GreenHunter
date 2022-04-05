@@ -22,7 +22,7 @@ void setup() {
   pinMode(sensor_midin, INPUT);
   fd();
   delay(1300);
-  attachInterrupt(INT2, dicision, FALLING);// suddenly from white to black
+  attachInterrupt(INT2, decision, FALLING);// suddenly from white to black
 }
 
 void loop() {
@@ -36,7 +36,7 @@ void loop() {
  *  interv is interval or how long does motor need te spin in milsec.
  */
 
-/* take dicision to determine if the line was thinck or thin
+/* take decision to determine if the line was thinck or thin
  * this will occur when midin sensor detect black stip at the border or black bridge.
  */
 void fd() // moving foward using global speed
@@ -60,7 +60,7 @@ void tr() // turn right
   motor(2, globalSpeed);
 }
 
-void dicision() {
+void decision() {
 
   sei();// Disable interrupt to make delay works
   motor(1, 0); motor(2, 0); // stop motor
